@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <title>Add Remove Select Box Fields Dynamically using jQuery Ajax in PHP</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+ </head>
+ <body>
+  <br />
+  <div class="container">
+   <h3 align="center">Add Remove Select Box Fields Dynamically using jQuery Ajax in PHP</h3>
+   <br />
+   <h4 align="center">Enter Item Details</h4>
+   <br />
+   <form method="post" action="/insertprecash" id="formdata"  enctype="multipart/form-data">
+    <div class="table-repsonsive">
+     <span id="error"></span>
+     <table class="table table-bordered" id="item_table">
+      <tr>
+       <th>SLIP NO</th>
+       <th>BILL NO.</th>
+       <th>BILL DATE</th>
+       <th>ACTIVITY CODE</th>
+       <th>DESCRIPTION OF ACTIVITY EXPENSES</th>
+       
+
+       <th>NATURE OF EXP</th>
+       <th>AMOUNT</th>
+       <th>FILE</th>
+       <th><button type="button" name="add" class="btn btn-success btn-sm add"><span class="glyphicon glyphicon-plus"></span></button></th>
+      </tr>
+     </table>
+     <div align="center">
+    
+      <input type="submit" name="submit" class="btn btn-info" value="Submit" />
+     </div>
+    </div>
+   </form>
+  </div>
+ </body>
+</html>
+
+<script>
+$(document).ready(function(){
+ var count = 1
+ $(document).on('click', '.add', function(){
+     var cnt = count++;
+  var html = '';
+  html += '<tr>';
+   html += '<td>'+cnt+'</td>';
+  html += '<td><input type="text" name="bill_no[]" class="form-control" /></td>';
+  html += '<td><input type="date" name="bill_date[]" class="form-control " /></td>';
+  html += '<td><select name="activity_code[]" class="form-control item_unit"><option value="1">Act/01/01/it/001</option><option value="2">Act/01/01/it/002</option></select></td>';
+  html += '<td><textarea  name="desc[]" class="form-control"></textarea></td>';
+  html += '<td><input type="text" name="nature_exp[]" class="form-control" /></td>';
+  html += '<td><input type="text" name="amount[]" class="form-control" /></td>';
+  html += '<td><input type="file" onChange="chkFile(this,'+cnt+')" name="fileprety[]" id="fileprety" class="form-control" /><input type="hidden" value="demo" name="imgpath[]" id="file_'+cnt+'"></td>';
+  html += '<td><button type="button" name="remove" class="btn btn-danger btn-sm remove"><span class="glyphicon glyphicon-minus"></span></button></td></tr>';
+  $('#item_table').append(html);
+ });
+ 
+ $(document).on('click', '.remove', function(){
+  $(this).closest('tr').remove();
+ });
+
+});
+
+
+$(function () {
+  $('form#formdata').bind('submit', function () {
+    $.ajax({
+      type: 'post',
+      url: '/insertprecash',
+      data: $('form#formdata').serialize(),
+      success: function (data) {
+        console.log(data);
+        alert(data);
+      }
+    });
+    return false;
+  });
+});
+
+
+function chkFile(file1,id) {
+    var file = file1.files[0];
+    var formData = new FormData();
+    formData.append('formData', file);
+
+   
+    $.ajax({
+    type: "POST",
+    url: "/pettycash",    
+    cache: false,
+    dataType:'json',
+    processData: false,
+    contentType: false,
+    data: formData,
+    success: function (data) {
+      console.log(data);
+    //  var result = JSON.stringify(data)
+     $('#file_'+id).val(data.url);
+     
+      }
+  });
+}
+
+</script>
